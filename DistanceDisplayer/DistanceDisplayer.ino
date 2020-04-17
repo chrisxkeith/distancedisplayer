@@ -1,8 +1,9 @@
+const bool dbg = false;
 const int trigPin = 6;
 const int echoPin = 7;
 
 long calc_distance() {
-  int distanceInFeet = -1; 
+  int distanceInFeet = 200; 
   do {      
     digitalWrite(trigPin, LOW);   // Clear the trigPin
     delayMicroseconds(20);
@@ -12,8 +13,15 @@ long calc_distance() {
     
     // Read the echoPin, return the sound wave travel time in microseconds
     long duration = pulseIn(echoPin, HIGH);
-    distanceInFeet = round((duration * 0.034 / 2) * 0.032); 
-  } while (distanceInFeet > 10);
+    if (duration > 0) {
+      distanceInFeet = round((duration * 0.034 / 2) * 0.032);
+      if (dbg) {
+        String s = "debug: duration = ";
+        s.concat(duration);
+        Serial.println(s);
+      }
+    }
+  } while (distanceInFeet > 100);
   // Possibly In The Future: Figure out where the 103/104 distanceInFeet come from
   return(distanceInFeet);
 }
