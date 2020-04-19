@@ -1,6 +1,17 @@
-const bool dbg = false;
+
+# Please credit chris.keith@gmail.com .
+
 const int trigPin = 6;
 const int echoPin = 7;
+
+const bool dbg = true;
+void dbg_print(String s) {
+  if (dbg) {
+    String d = "debug: ";
+    d.concat(s);
+    Serial.println(d);
+  }
+}
 
 long calc_distance() {
   int distanceInFeet = 200; 
@@ -14,14 +25,12 @@ long calc_distance() {
     // Read the echoPin, return the sound wave travel time in microseconds
     long duration = pulseIn(echoPin, HIGH);
     if (duration > 0) {
+      String s = "duration(2) = ";
+      s.concat(duration);
+      dbg_print(s);
       distanceInFeet = round((duration * 0.034 / 2) * 0.032);
-      if (dbg) {
-        String s = "debug: duration = ";
-        s.concat(duration);
-        Serial.println(s);
-      }
     }
-  } while (distanceInFeet > 100);
+  } while (distanceInFeet > 16);
   // Possibly In The Future: Figure out where the 103/104 distanceInFeet come from
   return(distanceInFeet);
 }
