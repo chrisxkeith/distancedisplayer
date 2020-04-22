@@ -25,7 +25,7 @@ void draw_screen(int val) {
   u8g2.firstPage();
   do {
       u8g2_prepare();
-      u8g2.drawFrame(0, 0, u8g2.getDisplayWidth(), 96 );
+      u8g2.drawFrame(0, 0, u8g2.getDisplayWidth(), 96);
       u8g2.setFont(u8g2_font_inb30_mr);    // set the target font
       u8g2.drawUTF8(1, 30, String(val).c_str());
   } while( u8g2.nextPage() );
@@ -53,9 +53,9 @@ void dbg_print(String s) {
 
 long sample() {
     digitalWrite(trigPin, LOW);   // Clear the trigPin
-    delayMicroseconds(4);
+    delayMicroseconds(2);
     digitalWrite(trigPin, HIGH);  // Set the trigPin on HIGH state for n microseconds
-    delayMicroseconds(20);
+    delayMicroseconds(10);
     digitalWrite(trigPin, LOW);
     
     // Read the echoPin, return the sound wave travel time in microseconds
@@ -65,12 +65,7 @@ long sample() {
 long calc_distance() {
   int distanceInFeet = 17;
   do {
-    long sum_samples = 0;
-    const int MAX_SAMPLES = 5;
-    for (int n_samples = 0; n_samples < MAX_SAMPLES; n_samples++) {
-        sum_samples = sample();
-    }
-    long duration = sum_samples / MAX_SAMPLES;
+    long duration = sample();
     if (duration > 0) {
       String s = "duration(2) = ";
       s.concat(duration);
