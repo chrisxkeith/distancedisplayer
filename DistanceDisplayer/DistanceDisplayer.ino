@@ -1,7 +1,6 @@
 
 // Please credit chris.keith@gmail.com .
 
-#include <Arduino.h>
 #include <U8g2lib.h>
 
 #ifdef U8X8_HAVE_HW_SPI
@@ -14,7 +13,7 @@
 U8G2_SSD1327_EA_W128128_1_HW_I2C u8g2(U8G2_R0, /* reset=*/ U8X8_PIN_NONE); /* Uno: A4=SDA, A5=SCL, add "u8g2.setBusClock(400000);" into setup() for speedup if possible */
 
 void u8g2_prepare(void) {
-  u8g2.setFont(u8g2_font_6x10_tf);
+  u8g2.setFont(u8g2_font_inb63_mn);
   u8g2.setFontRefHeightExtendedText();
   u8g2.setDrawColor(1);
   u8g2.setFontPosTop();
@@ -25,9 +24,7 @@ void draw_screen(int val) {
   u8g2.firstPage();
   do {
       u8g2_prepare();
-      u8g2.drawFrame(0, 0, u8g2.getDisplayWidth(), 96);
-      u8g2.setFont(u8g2_font_inb30_mr);    // set the target font
-      u8g2.drawUTF8(1, 30, String(val).c_str());
+      u8g2.drawUTF8(30, 10, String(val).c_str());
   } while( u8g2.nextPage() );
 }
 
