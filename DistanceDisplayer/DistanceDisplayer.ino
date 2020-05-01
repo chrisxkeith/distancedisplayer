@@ -34,6 +34,7 @@ void setup_OLED() {
   digitalWrite(10, 0);
   digitalWrite(9, 0);
   u8g2.begin();
+  u8g2.setBusClock(400000);
 }
 
 const int trigPin = 6;
@@ -85,11 +86,17 @@ void setup(void) {
   setup_distance_sensor();
   setup_OLED();
   Serial.println("Finished setup...");
+  delay(2000);
 }
 
+long previous_dist = -1;
 void loop() {
   long dist = calc_distance();
-  Serial.println(String(dist) + " ft.");
-  draw_screen(dist);
-  delay(1000);
+  if (previous_dist != dist) {
+    Serial.println(String(dist) + " ft.");
+    draw_screen(dist);
+    previous_dist = dist;
+  } else {
+    delay(1000);
+  }
 }
