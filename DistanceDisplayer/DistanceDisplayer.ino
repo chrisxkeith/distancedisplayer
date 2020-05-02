@@ -1,6 +1,17 @@
 
 // Please credit chris.keith@gmail.com .
 
+const bool dbg = false;
+void dbg_print(String msg, long val) {
+  if (dbg) {
+    String d = "debug: ";
+    d.concat(msg);
+    d.concat("=");
+    d.concat(val);
+    Serial.println(d);
+  }
+}
+
 #include <U8g2lib.h>
 
 #ifdef U8X8_HAVE_HW_SPI
@@ -40,15 +51,6 @@ void setup_OLED() {
 const int trigPin = 6;
 const int echoPin = 7;
 
-const bool dbg = false;
-void dbg_print(String s) {
-  if (dbg) {
-    String d = "debug: ";
-    d.concat(s);
-    Serial.println(d);
-  }
-}
-
 long sample() {
     digitalWrite(trigPin, LOW);   // Clear the trigPin
     delayMicroseconds(2);
@@ -65,9 +67,7 @@ long calc_distance() {
   do {
     long duration = sample();
     if (duration > 0) {
-      String s = "duration(2) = ";
-      s.concat(duration);
-      dbg_print(s);
+      dbg_print("duration", duration);
       distanceInFeet = round((duration * 0.034 / 2) * 0.032);
     }
   } while (distanceInFeet > 16);
