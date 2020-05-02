@@ -1,7 +1,7 @@
 # distancedisplayer
 Display distance to remind folks about 'social distancing'
 
-Setup steps *(in progress)*:
+Setup steps *(chris.keith@gmail.com if you need more detail)*:
 
 - Clone this repository locally
   - git clone https://github.com/chrisxkeith/distancedisplayer.git
