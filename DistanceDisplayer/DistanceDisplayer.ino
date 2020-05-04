@@ -1,14 +1,14 @@
 
 // Please credit chris.keith@gmail.com .
 
-const String githubHash("githubHash: to be replaced after 'git push'");
+const String githubHash("githubHash: to be filled in after 'git push'");
 
-const bool dbg = true;
+const bool dbg = false;
 void dbg_print(String msg, long val) {
   if (dbg) {
     String d = "debug: ";
     d.concat(msg);
-    d.concat("=");
+    d.concat(" = ");
     d.concat(val);
     Serial.println(d);
   }
@@ -54,17 +54,21 @@ const int trigPin = 6;
 const int echoPin = 7;
 
 long sample() {
+    dbg_print("top of sample()", 0);
     digitalWrite(trigPin, LOW);   // Clear the trigPin
     delayMicroseconds(2);
     digitalWrite(trigPin, HIGH);  // Set the trigPin on HIGH state for n microseconds
     delayMicroseconds(10);
     digitalWrite(trigPin, LOW);
-    
+
+    long ret = pulseIn(echoPin, HIGH);
+    dbg_print("near bottom of sample(), ret", ret);
     // Read the echoPin, return the sound wave travel time in microseconds
-    return pulseIn(echoPin, HIGH);
+    return ret;
 }
 
 long calc_distance() {
+  dbg_print("top of calc_distance()", 0);
   int distanceInFeet = 17;
   do {
     long duration = sample();
@@ -94,6 +98,7 @@ void setup(void) {
 
 long previous_dist = -1;
 void loop() {
+  dbg_print("top of loop", 0);
   long dist = calc_distance();
   if (previous_dist != dist) {
     Serial.println(String(dist) + " ft.");
