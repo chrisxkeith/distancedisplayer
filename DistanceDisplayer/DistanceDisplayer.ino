@@ -1,7 +1,9 @@
 
 // Please credit chris.keith@gmail.com .
 
-const bool dbg = false;
+const String githubHash("githubHash: to be replaced after 'git push'");
+
+const bool dbg = true;
 void dbg_print(String msg, long val) {
   if (dbg) {
     String d = "debug: ";
@@ -86,6 +88,7 @@ void setup(void) {
   setup_distance_sensor();
   setup_OLED();
   Serial.println("Finished setup...");
+  Serial.println(githubHash);
   delay(2000);
 }
 
