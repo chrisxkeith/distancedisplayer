@@ -1,7 +1,7 @@
 
 // Please credit chris.keith@gmail.com .
 
-const String githubHash("githubHash: to be filled in after 'git push'");
+const String githubHash("to be filled in after 'git push'");
 
 const bool dbg = false;
 void dbg_print(String msg, long val) {
@@ -33,6 +33,15 @@ void u8g2_prepare(void) {
   u8g2.setFontDirection(0);
 }
 
+void drawUTF8(String val) {
+  u8g2.firstPage();
+  do {
+      u8g2_prepare();
+      u8g2.setFont(u8g2_font_ncenB14_tr);
+      u8g2.drawUTF8(0, 0, val.c_str());
+  } while( u8g2.nextPage() );
+}
+
 void draw_screen(int val) {
   u8g2.firstPage();
   do {
@@ -62,7 +71,7 @@ long sample() {
     digitalWrite(trigPin, LOW);
 
     long ret = pulseIn(echoPin, HIGH);
-    dbg_print("near bottom of sample(), ret", ret);
+    dbg_print("bottom of sample(), ret", ret);
     // Read the echoPin, return the sound wave travel time in microseconds
     return ret;
 }
@@ -76,7 +85,7 @@ long calc_distance() {
       dbg_print("duration", duration);
       distanceInFeet = round((duration * 0.034 / 2) * 0.032);
     }
-  } while (distanceInFeet > 16);
+  } while (distanceInFeet > 16); // TODO : Add timeout and fail message.
   // Possibly In The Future: Figure out where the 100+ distanceInFeet come from.
   return(distanceInFeet);
 }
@@ -93,7 +102,8 @@ void setup(void) {
   setup_OLED();
   Serial.println("Finished setup...");
   Serial.println(githubHash);
-  delay(2000);
+  drawUTF8(githubHash.substring(0,12));
+  delay(5000);
 }
 
 long previous_dist = -1;
