@@ -118,6 +118,7 @@ long sample() {
 
 long calc_distance() {
   eventSaver.addEvent("calc_distance");
+  String samples;
   long start = millis();
   int distanceInFeet = 17;
   do {
@@ -125,10 +126,20 @@ long calc_distance() {
     if (duration > 0) {
       distanceInFeet = round((duration * 0.034 / 2) * 0.032);
     }
+    samples.concat(millis());
+    samples.concat(",");
+    samples.concat(duration);
+    samples.concat(",");
+    samples.concat(distanceInFeet);
+    samples.concat(";");
   } while (distanceInFeet > 16); // TODO : Add timeout and fail message.
   // Possibly In The Future: Figure out where the 100+ distanceInFeet come from.
-  if (millis() - start > 1000) {
-    eventSaver.printEvents();
+  long d = millis() - start;
+  if (d > 1000) {
+    String s("delay: ");
+    s.concat(d);
+    Serial.println(s);
+    Serial.println(samples);
   }
   return(distanceInFeet);
 }
