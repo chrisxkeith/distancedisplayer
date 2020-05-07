@@ -149,6 +149,12 @@ void setup_distance_sensor() {
   pinMode(echoPin, INPUT);
 }
 
+void heartBeat() {
+    String s("heartbeat: ");
+    s.concat(millis());
+    Serial.println(s);
+}
+
 void setup(void) {
   Serial.begin(9600);
   Serial.println("Started setup...");
@@ -158,9 +164,11 @@ void setup(void) {
   Serial.println(githubHash);
   drawUTF8(githubHash.substring(0,12));
   delay(5000);
+  heartBeat();
 }
 
 long previous_dist = -1;
+long lastHeartBeat = 0;
 void loop() {
   eventSaver.addEvent("loop");
   long dist = calc_distance();
@@ -169,5 +177,9 @@ void loop() {
     previous_dist = dist;
   } else {
     delay(500);
+  }
+  if (millis() - lastHeartBeat > 1000 * 60 * 10) {
+    heartBeat();
+    lastHeartBeat = millis();
   }
 }
