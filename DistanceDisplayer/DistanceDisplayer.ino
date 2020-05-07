@@ -82,7 +82,6 @@ void drawUTF8(String val) {
   } while( u8g2.nextPage() );
 }
 
-long lastDrawInt = millis();
 void drawInt(int val) {
   eventSaver.addEvent("drawInt");
   u8g2.firstPage();
@@ -90,10 +89,6 @@ void drawInt(int val) {
       u8g2_prepare();
       u8g2.drawUTF8(30, 10, String(val).c_str());
   } while( u8g2.nextPage() );
-  if (millis() - lastDrawInt > 3000) {
-    eventSaver.printEvents();
-  }
-  lastDrawInt = millis();
 }
 
 void setup_OLED() {
