@@ -1,18 +1,58 @@
-
 // Please credit chris.keith@gmail.com .
 
 const String githubHash("to be filled in after 'git push'");
 
-const bool dbg = false;
-void dbg_print(String msg, long val) {
-  if (dbg) {
-    String d = "debug: ";
-    d.concat(msg);
-    d.concat(" = ");
-    d.concat(val);
-    Serial.println(d);
-  }
-}
+class EventSaver {
+#define NUM_EVENTS 100
+  private:
+    const int MAX_STRING_LENGTH = 255;
+    String    events[NUM_EVENTS];
+    int       nextEventIndex = 0;
+
+    void increment(int* i) {
+      if (*i < NUM_EVENTS - 1) {
+        (*i)++;
+      } else {
+        *i = 0;
+      }
+    }
+  public:
+    EventSaver() {
+      for (int i = 0; i < NUM_EVENTS; i++) {
+        events[i] = "";
+      }
+    }
+    void addEvent(String event) {
+      events[nextEventIndex] = String(millis());
+      events[nextEventIndex].concat(",");
+      events[nextEventIndex].concat(event);
+      events[nextEventIndex].concat(";");
+      increment(&nextEventIndex);
+    }
+    String dump() {
+      String s("Eventsaver: nextEventIndex=");
+      s.concat(nextEventIndex);
+      return s;
+    }
+    void printEvents() {
+      String s = "";
+      int lastEventIndex = nextEventIndex;
+      while (events[lastEventIndex].length() > 0) {
+        if (events[lastEventIndex].length() + s.length() < MAX_STRING_LENGTH) {
+          s.concat(events[lastEventIndex]);
+        } else {
+          Serial.println(s);
+          s = "";
+        }
+        increment(&lastEventIndex);
+        if (lastEventIndex == nextEventIndex) {
+          Serial.println(s);
+          break;
+        }
+      }
+    }
+};
+EventSaver eventSaver;
 
 #include <U8g2lib.h>
 
@@ -42,12 +82,18 @@ void drawUTF8(String val) {
   } while( u8g2.nextPage() );
 }
 
-void draw_screen(int val) {
+long lastDrawInt = millis();
+void drawInt(int val) {
+  eventSaver.addEvent("drawInt");
   u8g2.firstPage();
   do {
       u8g2_prepare();
       u8g2.drawUTF8(30, 10, String(val).c_str());
   } while( u8g2.nextPage() );
+  if (millis() - lastDrawInt > 3000) {
+    eventSaver.printEvents();
+  }
+  lastDrawInt = millis();
 }
 
 void setup_OLED() {
@@ -63,26 +109,24 @@ const int trigPin = 6;
 const int echoPin = 7;
 
 long sample() {
-    dbg_print("top of sample()", 0);
-    digitalWrite(trigPin, LOW);   // Clear the trigPin
-    delayMicroseconds(2);
-    digitalWrite(trigPin, HIGH);  // Set the trigPin on HIGH state for n microseconds
-    delayMicroseconds(10);
-    digitalWrite(trigPin, LOW);
+  eventSaver.addEvent("sample");
+  digitalWrite(trigPin, LOW);   // Clear the trigPin
+  delayMicroseconds(2);
+  digitalWrite(trigPin, HIGH);  // Set the trigPin on HIGH state for n microseconds
+  delayMicroseconds(10);
+  digitalWrite(trigPin, LOW);
 
-    long ret = pulseIn(echoPin, HIGH);
-    dbg_print("bottom of sample(), ret", ret);
-    // Read the echoPin, return the sound wave travel time in microseconds
-    return ret;
+  long ret = pulseIn(echoPin, HIGH);
+  // Read the echoPin, return the sound wave travel time in microseconds
+  return ret;
 }
 
 long calc_distance() {
-  dbg_print("top of calc_distance()", 0);
+  eventSaver.addEvent("calc_distance");
   int distanceInFeet = 17;
   do {
     long duration = sample();
     if (duration > 0) {
-      dbg_print("duration", duration);
       distanceInFeet = round((duration * 0.034 / 2) * 0.032);
     }
   } while (distanceInFeet > 16); // TODO : Add timeout and fail message.
@@ -108,13 +152,12 @@ void setup(void) {
 
 long previous_dist = -1;
 void loop() {
-  dbg_print("top of loop", 0);
+  eventSaver.addEvent("loop");
   long dist = calc_distance();
   if (previous_dist != dist) {
-    Serial.println(String(dist) + " ft.");
-    draw_screen(dist);
+    drawInt(dist);
     previous_dist = dist;
   } else {
-    delay(1000);
+    delay(500);
   }
 }
