@@ -149,10 +149,17 @@ void setup_distance_sensor() {
   pinMode(echoPin, INPUT);
 }
 
-void heartBeat() {
-    String s("heartbeat: ");
-    s.concat(millis());
-    Serial.println(s);
+#include <EEPROM.h>
+void setupEEPROM() {
+  String len("EEPROM.length() : ");
+  len.concat(EEPROM.length());
+  Serial.println(len);
+  len = "Duration in minutes of last session : ";
+  long minutes;
+  EEPROM.get(0, minutes);
+  len.concat(minutes);
+  Serial.println(len);
+  EEPROM.put(0, (long)0);
 }
 
 void setup(void) {
@@ -163,8 +170,8 @@ void setup(void) {
   Serial.println("Finished setup...");
   Serial.println(githubHash);
   drawUTF8(githubHash.substring(0,12));
+  setupEEPROM();
   delay(5000);
-  heartBeat();
 }
 
 long previous_dist = -1;
@@ -179,7 +186,8 @@ void loop() {
     delay(500);
   }
   if (millis() - lastHeartBeat > 1000 * 60 * 10) {
-    heartBeat();
+    long minutes = millis() / 1000 / 60;
+    EEPROM.put(0, minutes);
     lastHeartBeat = millis();
   }
 }
