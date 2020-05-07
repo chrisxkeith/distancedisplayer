@@ -1,6 +1,6 @@
 // Please credit chris.keith@gmail.com .
 
-const String githubHash(""to be filled in after 'git push'");
+const String githubHash("to be filled in after 'git push'");
 
 class EventSaver {
 #define NUM_EVENTS 100
