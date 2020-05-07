@@ -1,11 +1,11 @@
 // Please credit chris.keith@gmail.com .
 
-const String githubHash("to be filled in after 'git push'");
+const String githubHash(""to be filled in after 'git push'");
 
 class EventSaver {
 #define NUM_EVENTS 100
   private:
-    const int MAX_STRING_LENGTH = 255;
+    const int MAX_STRING_LENGTH = 32256;
     String    events[NUM_EVENTS];
     int       nextEventIndex = 0;
 
@@ -118,6 +118,7 @@ long sample() {
 
 long calc_distance() {
   eventSaver.addEvent("calc_distance");
+  long start = millis();
   int distanceInFeet = 17;
   do {
     long duration = sample();
@@ -126,6 +127,9 @@ long calc_distance() {
     }
   } while (distanceInFeet > 16); // TODO : Add timeout and fail message.
   // Possibly In The Future: Figure out where the 100+ distanceInFeet come from.
+  if (millis() - start > 1000) {
+    eventSaver.printEvents();
+  }
   return(distanceInFeet);
 }
 
