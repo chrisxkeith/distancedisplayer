@@ -54,7 +54,7 @@ class EventSaver {
 };
 EventSaver eventSaver;
 
-// #define USE_LASER_SENSOR
+#define USE_LASER_SENSOR
 
 #ifdef USE_LASER_SENSOR
 #include <ComponentObject.h>
@@ -229,12 +229,6 @@ void loop() {
   eventSaver.addEvent("loop");
   long dist = calc_distance();
   if (previous_dist != dist) {
-    // Smooth out the wild swings a bit.
-    if (dist > previous_dist) {
-      dist = previous_dist + 1;
-    } else {
-      dist = previous_dist - 1;
-    }
     drawInt(dist);
     previous_dist = dist;
   } else {
