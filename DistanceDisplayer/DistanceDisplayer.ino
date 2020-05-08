@@ -54,7 +54,7 @@ class EventSaver {
 };
 EventSaver eventSaver;
 
-#define USE_LASER_SENSOR
+// #define USE_LASER_SENSOR
 
 #ifdef USE_LASER_SENSOR
 #include <ComponentObject.h>
@@ -196,16 +196,19 @@ void setup_OLED() {
 }
 
 #include <EEPROM.h>
-void setupEEPROM() {
-  String len("EEPROM.length() : ");
-  len.concat(EEPROM.length());
-  Serial.println(len);
-  len = "Duration in minutes of last session : ";
+void getMinutes() {
+  String len = "Duration in minutes from EEPROM : ";
   long minutes;
   EEPROM.get(0, minutes);
   len.concat(minutes);
   Serial.println(len);
-  EEPROM.put(0, (long)0);
+}
+
+void setupEEPROM() {
+  String len("EEPROM.length() : ");
+  len.concat(EEPROM.length());
+  Serial.println(len);
+  getMinutes();
 }
 
 void setup(void) {
