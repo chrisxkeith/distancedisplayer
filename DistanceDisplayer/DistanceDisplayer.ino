@@ -54,7 +54,7 @@ class EventSaver {
 };
 EventSaver eventSaver;
 
-#define USE_LASER_SENSOR
+// #define USE_LASER_SENSOR
 
 #ifdef USE_LASER_SENSOR
 #include <ComponentObject.h>
@@ -195,22 +195,6 @@ void setup_OLED() {
   u8g2.setBusClock(400000);
 }
 
-#include <EEPROM.h>
-void getMinutes() {
-  String len = "Duration in minutes from EEPROM : ";
-  long minutes;
-  EEPROM.get(0, minutes);
-  len.concat(minutes);
-  Serial.println(len);
-}
-
-void setupEEPROM() {
-  String len("EEPROM.length() : ");
-  len.concat(EEPROM.length());
-  Serial.println(len);
-  getMinutes();
-}
-
 void setup(void) {
   Serial.begin(9600);
   Serial.println("Started setup...");
@@ -219,7 +203,6 @@ void setup(void) {
   Serial.println("Finished setup...");
   Serial.println(githubHash);
   drawUTF8(githubHash.substring(0,12));
-  setupEEPROM();
   delay(5000);
 }
 
@@ -233,10 +216,5 @@ void loop() {
     previous_dist = dist;
   } else {
     delay(500);
-  }
-  if (millis() - lastHeartBeat > 1000 * 60 * 10) {
-    long minutes = millis() / 1000 / 60;
-    EEPROM.put(0, minutes);
-    lastHeartBeat = millis();
   }
 }
