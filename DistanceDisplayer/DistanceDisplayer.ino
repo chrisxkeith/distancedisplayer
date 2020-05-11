@@ -68,7 +68,7 @@ long calc_distance() {
     if (duration > 0) {
       distanceInFeet = round((duration * 0.034 / 2) * 0.032);
     }
-    if (millis() - start > (1000 & 60)) {
+    if (millis() - start > (1000 * 60)) {
       return -1; // No data after 1 minute? Return error code.
     }
   } while ((distanceInFeet > 16));
