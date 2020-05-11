@@ -2,74 +2,15 @@
 
 const String githubHash("to be filled in after 'git push'");
 
-class EventSaver {
-#define NUM_EVENTS 100
-  private:
-    const int MAX_STRING_LENGTH = 32256;
-    String    events[NUM_EVENTS];
-    int       nextEventIndex = 0;
-
-    void increment(int* i) {
-      if (*i < NUM_EVENTS - 1) {
-        (*i)++;
-      } else {
-        *i = 0;
-      }
-    }
-  public:
-    EventSaver() {
-      for (int i = 0; i < NUM_EVENTS; i++) {
-        events[i] = "";
-      }
-    }
-    void addEvent(String event) {
-      events[nextEventIndex] = String(millis());
-      events[nextEventIndex].concat(",");
-      events[nextEventIndex].concat(event);
-      events[nextEventIndex].concat(";");
-      increment(&nextEventIndex);
-    }
-    String dump() {
-      String s("Eventsaver: nextEventIndex=");
-      s.concat(nextEventIndex);
-      return s;
-    }
-    void printEvents() {
-      String s = "";
-      int lastEventIndex = nextEventIndex;
-      while (events[lastEventIndex].length() > 0) {
-        if (events[lastEventIndex].length() + s.length() < MAX_STRING_LENGTH) {
-          s.concat(events[lastEventIndex]);
-        } else {
-          Serial.println(s);
-          s = "";
-        }
-        increment(&lastEventIndex);
-        if (lastEventIndex == nextEventIndex) {
-          Serial.println(s);
-          break;
-        }
-      }
-    }
-};
-EventSaver eventSaver;
-
 // #define USE_LASER_SENSOR
 
 #ifdef USE_LASER_SENSOR
+
 #include <ComponentObject.h>
 #include <RangeSensor.h>
 #include <SparkFun_VL53L1X.h>
 #include <vl53l1x_class.h>
 #include <vl53l1_error_codes.h>
-
-/*
-  Reading distance from the laser based VL53L1X
-  By: Nathan Seidle
-  SparkFun Electronics
-  Date: April 4th, 2018
-  License: This code is public domain but you buy me a beer if you use this and we meet someday (Beerware license).
-*/
 
 #include <Wire.h>
 #include "SparkFun_VL53L1X.h"
@@ -78,9 +19,8 @@ SFEVL53L1X distanceSensor;
 
 void setup_distance_sensor() {
   Wire.begin();
-  if (distanceSensor.begin() == 0) //Begin returns 0 on a good init
-  {
-    Serial.println("Laser distance sensor online!");
+  if (distanceSensor.begin() == 0) { // Begin returns 0 on a good init
+    Serial.println("Laser distance sensor online.");
   }
 }
 
@@ -97,13 +37,13 @@ long calc_distance() {
   float distanceFeet = distanceInches / 12.0;
   return (long)round(distanceFeet);
 }
+
 #else // USE_LASER_SENSOR
 
 const int trigPin = 6;
 const int echoPin = 7;
 
 long sample() {
-  eventSaver.addEvent("sample");
   digitalWrite(trigPin, LOW);   // Clear the trigPin
   delayMicroseconds(2);
   digitalWrite(trigPin, HIGH);  // Set the trigPin on HIGH state for n microseconds
@@ -115,8 +55,12 @@ long sample() {
   return ret;
 }
 
+void setup_distance_sensor() {
+  pinMode(trigPin, OUTPUT);
+  pinMode(echoPin, INPUT);
+}
+
 long calc_distance() {
-  eventSaver.addEvent("calc_distance");
   String samples;
   long start = millis();
   int distanceInFeet = 17;
@@ -143,10 +87,6 @@ long calc_distance() {
   return(distanceInFeet);
 }
 
-void setup_distance_sensor() {
-  pinMode(trigPin, OUTPUT);
-  pinMode(echoPin, INPUT);
-}
 #endif // USE_LASER_SENSOR
 
 #include <U8g2lib.h>
@@ -178,7 +118,6 @@ void drawUTF8(String val) {
 }
 
 void drawInt(int val) {
-  eventSaver.addEvent("drawInt");
   u8g2.firstPage();
   do {
       u8g2_prepare();
@@ -207,9 +146,7 @@ void setup(void) {
 }
 
 long previous_dist = -1;
-long lastHeartBeat = 0;
 void loop() {
-  eventSaver.addEvent("loop");
   long dist = calc_distance();
   if (previous_dist != dist) {
     drawInt(dist);
