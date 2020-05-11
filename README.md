@@ -15,4 +15,5 @@ Setup steps *(chris.keith@gmail.com if you need more detail)*:
 - Install graphics library
   - https://www.smart-prototyping.com/blog/Zio-Qwiic-1.5in-OLED-Display-Qwiic-Start-Guide
 
-https://drive.google.com/drive/folders/1Wcl2d-zBdOkI9ffhg3tqSwYocnH7kEfa?usp=sharing
+Parts list
+- https://docs.google.com/spreadsheets/d/1KQJk8Dv_6Q1HVd5dBZmaYERhhKaXd9QQnpH9arZhU5o/edit#gid=0
