@@ -61,7 +61,6 @@ void setup_distance_sensor() {
 }
 
 long calc_distance() {
-  String samples;
   long start = millis();
   int distanceInFeet = 17;
   do {
@@ -69,21 +68,10 @@ long calc_distance() {
     if (duration > 0) {
       distanceInFeet = round((duration * 0.034 / 2) * 0.032);
     }
-    samples.concat(millis());
-    samples.concat(",");
-    samples.concat(duration);
-    samples.concat(",");
-    samples.concat(distanceInFeet);
-    samples.concat(";");
-  } while (distanceInFeet > 16); // TODO : Add timeout and fail message.
-  // Possibly In The Future: Figure out where the 100+ distanceInFeet come from.
-  long d = millis() - start;
-  if (d > 1000) {
-    String s("delay: ");
-    s.concat(d);
-    Serial.println(s);
-    Serial.println(samples);
-  }
+    if (millis() - start > (1000 & 60)) {
+      return -1; // No data after 1 minute? Return error code.
+    }
+  } while ((distanceInFeet > 16));
   return(distanceInFeet);
 }
 
@@ -148,10 +136,14 @@ void setup(void) {
 long previous_dist = -1;
 void loop() {
   long dist = calc_distance();
-  if (previous_dist != dist) {
-    drawInt(dist);
-    previous_dist = dist;
+  if (dist < 0) {
+    drawUTF8("No data...");
+    delay(5 * 1000);
   } else {
-    delay(500);
+    if (previous_dist != dist) {
+      drawInt(dist);
+      previous_dist = dist;
+    } else {
+    }
   }
 }
