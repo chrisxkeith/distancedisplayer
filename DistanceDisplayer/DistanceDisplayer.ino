@@ -158,10 +158,10 @@ void setup(void) {
   Serial.println("Started setup...");
   setup_distance_sensor();
   setup_OLED();
-  Serial.println("Finished setup...");
   Serial.println(githubHash);
   drawUTF8(githubHash.substring(0,12));
   delay(5000);
+  Serial.println("Finished setup...");
 }
 
 long previous_dist = -1;
@@ -169,9 +169,9 @@ long previous_display_time = 0;
 
 void loop() {
   sample();
-  // Don't redraw faster than twice / second.
+  // Don't redraw faster than once a second.
   long now = millis();
-  if (now - previous_display_time > 500) {
+  if (now - previous_display_time > 1000) {
     previous_display_time = now;
     String d = dump();
     long dist = calc_distance();
