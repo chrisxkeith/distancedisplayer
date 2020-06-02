@@ -40,39 +40,70 @@ long calc_distance() {
 
 #else // USE_LASER_SENSOR
 
-const int trigPin = 6;
-const int echoPin = 7;
+class UltrasonicSensor {
+  private:
+    const int trigPin = 6;
+    const int echoPin = 7;
 
-long sample() {
-  digitalWrite(trigPin, LOW);   // Clear the trigPin
-  delayMicroseconds(2);
-  digitalWrite(trigPin, HIGH);  // Set the trigPin on HIGH state for n microseconds
-  delayMicroseconds(10);
-  digitalWrite(trigPin, LOW);
+    long      nSamples = 0;
+    double    sumSamples = 0.0;
 
-  long ret = pulseIn(echoPin, HIGH);
-  // Read the echoPin, return the sound wave travel time in microseconds
-  return ret;
-}
+    long do_sample() {
+      digitalWrite(trigPin, LOW);   // Clear the trigPin
+      delayMicroseconds(2);
+      digitalWrite(trigPin, HIGH);  // Set the trigPin on HIGH state for n microseconds
+      delayMicroseconds(10);
+      digitalWrite(trigPin, LOW);
+    
+      long ret = pulseIn(echoPin, HIGH);
+      // Read the echoPin, return the sound wave travel time in microseconds
+      return ret;
+    }
+    
+  public:
+    void setup_distance_sensor() {
+      pinMode(trigPin, OUTPUT);
+      pinMode(echoPin, INPUT);
+    }
+    
+    void sample() {
+      int distanceInFeet;
+      do {
+          distanceInFeet = round((do_sample() * 0.034 / 2) * 0.032);
+      } while (distanceInFeet < 0);
+      nSamples++;
+      sumSamples += distanceInFeet;
+    }
 
-void setup_distance_sensor() {
-  pinMode(trigPin, OUTPUT);
-  pinMode(echoPin, INPUT);
-}
+    long calc_distance() {
+      long v = round(sumSamples / nSamples);
+      nSamples = 0;
+      sumSamples = 0.0;
+      return v;
+    }
+
+    String dump() {
+      String s("nSamples = ");
+      s.concat(nSamples);
+      s.concat("; sumSamples = ");
+      s.concat(sumSamples);
+      s.concat(";");
+      return s;
+    }
+};
+UltrasonicSensor ultrasonicSensor;
 
 long calc_distance() {
-  long start = millis();
-  int distanceInFeet = 17;
-  do {
-    long duration = sample();
-    if (duration > 0) {
-      distanceInFeet = round((duration * 0.034 / 2) * 0.032);
-    }
-    if (millis() - start > (1000 * 60)) {
-      return -1; // No data after 1 minute? Return error code.
-    }
-  } while ((distanceInFeet > 16));
-  return(distanceInFeet);
+  return ultrasonicSensor.calc_distance();
+}
+void setup_distance_sensor() {
+  ultrasonicSensor.setup_distance_sensor();
+}
+void sample() {
+  ultrasonicSensor.sample();
+}
+String dump() {
+  return ultrasonicSensor.dump();
 }
 
 #endif // USE_LASER_SENSOR
@@ -134,16 +165,23 @@ void setup(void) {
 }
 
 long previous_dist = -1;
+long previous_display_time = 0;
+
 void loop() {
-  long dist = calc_distance();
-  if (dist < 0) {
-    drawUTF8("No data...");
-    delay(5 * 1000);
-  } else {
-    if (previous_dist != dist) {
+  sample();
+  // Don't redraw faster than twice / second.
+  long now = millis();
+  if (now - previous_display_time > 500) {
+    previous_display_time = now;
+    String d = dump();
+    long dist = calc_distance();
+    if ((dist < 16) && (previous_dist != dist)) {
       drawInt(dist);
       previous_dist = dist;
-    } else {
+      d.concat(" dist = ");
+      d.concat(dist);
+      d.concat(";");
+      Serial.println(d);
     }
   }
 }
