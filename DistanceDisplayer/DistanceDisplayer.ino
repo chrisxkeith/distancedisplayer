@@ -181,7 +181,7 @@ void loop() {
       d.concat(" dist = ");
       d.concat(dist);
       d.concat(";");
-      Serial.println(d);
+      // Serial.println(d);
     }
   }
 }
