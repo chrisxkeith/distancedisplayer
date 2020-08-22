@@ -1,6 +1,17 @@
 // Please credit chris.keith@gmail.com .
 
 const String githubHash("to be filled in after 'git push'");
+const String githubRepo("https://github.com/chrisxkeith/distancedisplayer");
+const bool debug = false;
+
+void to_serial(String s) {
+  char buf[12];
+  sprintf(buf, "%10u", millis());
+  String s1(buf);
+  s1.concat(" ");
+  s1.concat(s);
+  Serial.println(s1);
+}
 
 #define USE_LASER_SENSOR
 
@@ -20,11 +31,12 @@ SFEVL53L1X distanceSensor;
 void setup_distance_sensor() {
   Wire.begin();
   if (distanceSensor.begin() == 0) { // Begin returns 0 on a good init
-    Serial.println("Laser distance sensor online.");
+    to_serial("Laser distance sensor online.");
   }
 }
 
 long calc_distance() {
+  long start = millis();
   distanceSensor.startRanging(); //Write configuration bytes to initiate measurement
   while (!distanceSensor.checkForDataReady()) {
     delay(1);
@@ -35,13 +47,22 @@ long calc_distance() {
 
   float distanceInches = distance * 0.0393701;
   float distanceFeet = distanceInches / 12.0;
+
+  if (debug) {
+    long duration = millis() - start;
+    String d = dump();
+    d.concat("duration = ");
+    d.concat(duration);
+    d.concat(";");
+    to_serial(d);
+  }
   return (long)round(distanceFeet);
 }
 
 void sample() {
 }
 String dump() {
-  return String("Laser sensor no dump");
+  return String(" ");
 }
 #else // USE_LASER_SENSOR
 
@@ -160,33 +181,40 @@ void setup_OLED() {
 
 void setup(void) {
   Serial.begin(9600);
-  Serial.println("Started setup...");
+  to_serial("Started setup...");
   setup_distance_sensor();
   setup_OLED();
-  Serial.println(githubHash);
+  to_serial(githubRepo);
+  to_serial(githubHash);
   drawUTF8(githubHash.substring(0,12));
-  delay(5000);
-  Serial.println("Finished setup...");
+  delay(3000);
+  to_serial("Finished setup...");
 }
 
 long previous_dist = -1;
 long previous_display_time = 0;
 
+void do_dump(long dist) {
+  if (debug) {
+    String d = dump();
+    d.concat("dist = ");
+    d.concat(dist);
+    d.concat(";");
+    to_serial(d);
+  }
+}
+
 void loop() {
-  sample();
   // Don't redraw faster than once a second.
   long now = millis();
   if (now - previous_display_time > 1000) {
     previous_display_time = now;
-    String d = dump();
+    sample();
     long dist = calc_distance();
     if ((dist < 16) && (previous_dist != dist)) {
       drawInt(dist);
       previous_dist = dist;
-      d.concat(" dist = ");
-      d.concat(dist);
-      d.concat(";");
-      // Serial.println(d);
+      do_dump(dist);
     }
   }
 }
