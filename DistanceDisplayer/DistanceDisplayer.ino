@@ -57,7 +57,7 @@ void setup_distance_sensor() {
 }
 
 long calc_distance() {
-  MicrosecondTimer("Laser sensor calc distance");
+  MicrosecondTimer("laser sensor calc distance");
   distanceSensor.startRanging(); //Write configuration bytes to initiate measurement
   while (!distanceSensor.checkForDataReady()) {
     delay(1);
