@@ -2,7 +2,7 @@
 
 const String githubHash("to be filled in after 'git push'");
 const String githubRepo("https://github.com/chrisxkeith/distancedisplayer");
-const bool debug = false;
+const bool debug = true;
 
 void to_serial(String s) {
   char buf[12];
@@ -12,6 +12,27 @@ void to_serial(String s) {
   s1.concat(s);
   Serial.println(s1);
 }
+
+class MicrosecondTimer {
+  private:
+    long start;
+    String name;
+  public:
+    MicrosecondTimer(String name) {
+        start = micros();
+        this->name = name;
+        this->name.replace(" ", "_");
+    }
+    ~MicrosecondTimer() {
+      if (debug) {
+        long duration = micros() - start;
+        name.concat("_microseconds = ");
+        name.concat(duration);
+        name.concat(";");
+        to_serial(name);
+      }
+    }
+};
 
 #define USE_LASER_SENSOR
 
@@ -36,7 +57,7 @@ void setup_distance_sensor() {
 }
 
 long calc_distance() {
-  long start = millis();
+  MicrosecondTimer("Laser sensor calc distance");
   distanceSensor.startRanging(); //Write configuration bytes to initiate measurement
   while (!distanceSensor.checkForDataReady()) {
     delay(1);
@@ -47,22 +68,13 @@ long calc_distance() {
 
   float distanceInches = distance * 0.0393701;
   float distanceFeet = distanceInches / 12.0;
-
-  if (debug) {
-    long duration = millis() - start;
-    String d = dump();
-    d.concat("duration = ");
-    d.concat(duration);
-    d.concat(";");
-    to_serial(d);
-  }
   return (long)round(distanceFeet);
 }
 
 void sample() {
 }
 String dump() {
-  return String(" ");
+  return String("");
 }
 #else // USE_LASER_SENSOR
 
@@ -163,6 +175,7 @@ void drawUTF8(String val) {
 }
 
 void drawInt(int val) {
+  MicrosecondTimer("drawInt");
   u8g2.firstPage();
   do {
       u8g2_prepare();
@@ -197,7 +210,7 @@ long previous_display_time = 0;
 void do_dump(long dist) {
   if (debug) {
     String d = dump();
-    d.concat("dist = ");
+    d.concat("distance_in_feet = ");
     d.concat(dist);
     d.concat(";");
     to_serial(d);
