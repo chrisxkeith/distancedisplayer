@@ -2,7 +2,7 @@
 
 const String githubHash("to be filled in after 'git push'");
 
-// #define USE_LASER_SENSOR
+#define USE_LASER_SENSOR
 
 #ifdef USE_LASER_SENSOR
 
@@ -38,6 +38,11 @@ long calc_distance() {
   return (long)round(distanceFeet);
 }
 
+void sample() {
+}
+String dump() {
+  return String("Laser sensor no dump");
+}
 #else // USE_LASER_SENSOR
 
 class UltrasonicSensor {
@@ -106,7 +111,7 @@ String dump() {
   return ultrasonicSensor.dump();
 }
 
-#endif // USE_LASER_SENSOR
+#endif // else USE_LASER_SENSOR
 
 #include <U8g2lib.h>
 
