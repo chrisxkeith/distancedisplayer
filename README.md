@@ -18,7 +18,7 @@ Setup steps *(chris.keith@gmail.com if you need more detail)*:
 - Download:
   - https://github.com/sparkfun/SparkFun_VL53L1X_Arduino_Library/archive/master.zip
 
-- Arduino IDE > Sketch > Include ZIP Library
+- Arduino IDE > Sketch > Include Library... > Add .ZIP Library...
   - C:\Users\__you__\Downloads\SparkFun_VL53L1X_Arduino_Library-master.zip
 
 Parts list
