@@ -4,9 +4,9 @@
             "name": "Win32",
             "includePath": [
                 "C:\\Users\\chris\\AppData\\Local\\Arduino15\\packages\\SparkFun\\tools\\**",
-                "C:\\Users\\chris\\AppData\\Local\\Arduino15\\packages\\SparkFun\\hardware\\apollo3\\1.1.1\\**",
                 "${workspaceFolder}\\**",
-                "${workspaceFolder}\\..\\..\\Arduino\\libraries\\**"
+                "${workspaceFolder}\\..\\..\\Arduino\\libraries\\**",
+                "C:\\Users\\chris\\AppData\\Local\\Arduino15\\packages\\SparkFun\\hardware\\apollo3\\1.2.0\\**"
             ],
             "forcedInclude": [],
             "intelliSenseMode": "msvc-x64",

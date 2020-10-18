@@ -1,6 +1,6 @@
 {
-    "port": "COM14",
+    "port": "COM17",
     "board": "SparkFun:apollo3:amap3redboard",
     "sketch": "DistanceDisplayer\\DistanceDisplayer.ino",
-    "configuration": "svl_baud=921600,loader=sparkfun_svl"
+    "configuration": "svl_baud=57600,loader=sparkfun_svl"
 }
