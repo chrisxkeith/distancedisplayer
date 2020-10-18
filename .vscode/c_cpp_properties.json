@@ -6,7 +6,8 @@
                 "C:\\Users\\chris\\AppData\\Local\\Arduino15\\packages\\SparkFun\\tools\\**",
                 "${workspaceFolder}\\**",
                 "${workspaceFolder}\\..\\..\\Arduino\\libraries\\**",
-                "C:\\Users\\chris\\AppData\\Local\\Arduino15\\packages\\SparkFun\\hardware\\apollo3\\1.2.0\\**"
+                "C:\\Users\\chris\\AppData\\Local\\Arduino15\\packages\\SparkFun\\hardware\\apollo3\\1.2.0\\**",
+                "C:\\Users\\chris\\Documents\\Arduino\\libraries\\arduino_415603\\src\\**"
             ],
             "forcedInclude": [],
             "intelliSenseMode": "msvc-x64",
